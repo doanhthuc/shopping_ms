@@ -1,22 +1,23 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
 const CartSchema = new Schema(
     {
-        orderId: String,
-        customerId: String,
-        amount: Number,
-        status: String,
-        txnId: String,
+        customerId: { type: String },
         items: [
             {
                 product: {
-                    type: Schema.Types.ObjectId,
-                    ref: 'product',
-                    required: true,
+                    _id: { type: String, required: true },
+                    name: { type: String },
+                    desc: { type: String },
+                    banner: { type: String },
+                    type: { type: String },
+                    unit: { type: Number },
+                    price: { type: Number },
+                    supplier: { type: String },
                 },
-                unit: { type: Number, require: true },
+                unit: { type: Number, required: true },
             },
         ],
     },
@@ -30,4 +31,4 @@ const CartSchema = new Schema(
     }
 );
 
-module.exports = mongoose.model('cart', CartSchema);
+module.exports = mongoose.model("cart", CartSchema);
