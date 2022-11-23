@@ -12,7 +12,7 @@ module.exports = async (app, channel) => {
     app.use(express.static(__dirname + '/public'))
 
     // Listener
-    appEvents(app);
+    // appEvents(app);
 
     //api
     products(app, channel);

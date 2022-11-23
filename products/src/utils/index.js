@@ -54,7 +54,6 @@ module.exports.FormateData = (data) => {
 module.exports.PublishCustomerEvent = async (payload) => {
     axios.post('http://localhost:8000/customer/app-events', { payload });
     // Perform some operation
-
 };
 
 module.exports.PublishShoppingEvent = async (payload) => {
@@ -69,7 +68,7 @@ module.exports.CreateChannel = async () => {
     try {
         const connection = await amqplib.connect(MESSAGE_BROKER_URL);
         const channel = await connection.createChannel();
-        await channel.assertQueue(EXCHANGE_NAME, 'direct', false);
+        await channel.assertExchange(EXCHANGE_NAME, 'direct', false);
         return channel;
     } catch (error) {
         throw error;
@@ -84,7 +83,7 @@ module.exports.PublishMessage = async (channel, binding_key, message) => {
     } catch (error) {
         throw error;
     }
-}
+};
 
 // Subscribe to messages
 module.exports.SubscribeMessage = async (channel, service, binding_key) => {
@@ -92,9 +91,9 @@ module.exports.SubscribeMessage = async (channel, service, binding_key) => {
 
     channel.bindQueue(appQueue.queue, EXCHANGE_NAME, binding_key);
 
-    channel.consume(appQueue.queue, data => {
+    channel.consume(appQueue.queue, (data) => {
         console.log('RECEIVED DATA');
         console.log(data.content.toString());
         channel.ack(data);
-    })
-}
+    });
+};

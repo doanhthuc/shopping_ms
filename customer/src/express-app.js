@@ -12,7 +12,7 @@ module.exports = async (app, channel) => {
     app.use(express.static(__dirname + '/public'))
 
     // Listen to Events
-    appEvent(app);
+    // appEvent(app);
 
 
     //api

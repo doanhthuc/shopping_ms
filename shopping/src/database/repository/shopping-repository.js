@@ -79,50 +79,42 @@ class ShoppingRepository {
 
 
     async CreateNewOrder(customerId, txnId) {
+        //required to verify payment through TxnId
 
-        //check transaction for payment Status
+        const cart = await CartModel.findOne({ customerId: customerId });
 
-        try {
-            const profile = await CustomerModel.findById(customerId).populate('cart.product');
+        if (cart) {
+            let amount = 0;
 
-            if (profile) {
+            let cartItems = cart.items;
 
-                let amount = 0;
+            if (cartItems.length > 0) {
+                //process Order
 
-                let cartItems = profile.cart;
+                cartItems.map((item) => {
+                    amount +=
+                        parseInt(item.product.price) * parseInt(item.unit);
+                });
 
-                if (cartItems.length > 0) {
-                    //process Order
-                    cartItems.map(item => {
-                        amount += parseInt(item.product.price) * parseInt(item.unit);
-                    });
+                const orderId = uuidv4();
 
-                    const orderId = uuidv4();
+                const order = new OrderModel({
+                    orderId,
+                    customerId,
+                    amount,
+                    status: 'received',
+                    items: cartItems,
+                });
 
-                    const order = new OrderModel({
-                        orderId,
-                        customerId,
-                        amount,
-                        txnId,
-                        status: 'received',
-                        items: cartItems
-                    })
+                cart.items = [];
 
-                    cart.items = [];
-
-                    const orderResult = await order.save();
-                    await cart.save();
-                    return orderResult;
-                }
+                const orderResult = await order.save();
+                await cart.save();
+                return orderResult;
             }
-
-            return {}
-
-        } catch (err) {
-            throw APIError('API Error', STATUS_CODES.INTERNAL_ERROR, 'Unable to Find Category')
         }
 
-
+        return {};
     }
 }
 
